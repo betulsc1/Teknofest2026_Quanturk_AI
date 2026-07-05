@@ -1,0 +1,38 @@
+=================================================================
+TEKNOFEST GÖREV 2 - PERFORMANS RAPORU
+=================================================================
+
+Tarih: 2026-06-29 19:09:11
+Veri Seti: Sentetik (Lissajous 8-şekli yörünge)
+Toplam Kare: 2250
+FPS: 7.5
+GPS Sağlıklı: İlk 450 kare (60s)
+GPS Kesik: Son 1800 kare (240s)
+
+-----------------------------------------------------------------
+DOĞRULUK METRİKLERİ
+-----------------------------------------------------------------
+Toplam RMSE              : 6.5454 metre
+RMSE X / Y / Z           : 9.7400 / 4.1339 / 3.5319 metre
+Maksimum Hata            : 50.0000 metre
+
+GPS Kesik Dönem RMSE     : 8.1363 metre
+GPS Kesik X / Y / Z      : 10.8897 / 4.6217 / 3.7688 metre
+
+-----------------------------------------------------------------
+PERFORMANS METRİKLERİ
+-----------------------------------------------------------------
+Ortalama İşleme Süresi   : 143.0 ms/kare
+Maksimum İşleme Süresi   : 1876.5 ms/kare
+Efektif FPS              : 7.0
+Yarışma FPS Sınırı       : 7.5
+FPS Yeterliliği          : ❌ YETERSİZ
+
+-----------------------------------------------------------------
+YARIŞMA DEĞERLENDİRMESİ (Şartname Denklem 2)
+-----------------------------------------------------------------
+Ortalama Hata (RMSE)     : 8.1363 metre
+Puanlama Notu: Yarışmada sadece GPS kesik dönemdeki hatalar puanlanır.
+              RMSE ne kadar düşükse puan o kadar yüksektir.
+
+=================================================================

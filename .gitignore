@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Dataset files (avoid pushing massive image datasets to GitHub)
+data/datasets/task2/frames/*.png
+data/datasets/task2/ground_map.png
+data/datasets/task2/*.json
+
+# Keep the datasets directory structure but ignore contents
+!data/datasets/task2/frames/.gitkeep
+
+# IDEs
+.vscode/
+.idea/
+
+# Large Model Weights and Training Runs
+*.pt
+runs/
+
+# Large test output folders
+tests/task2/birincideneme/
+tests/task2/ikincideneme/
+tests/task2/ucuncudeneme/
+tests/task2/dorduncudeneme/
+tests/task2/besincideneme/

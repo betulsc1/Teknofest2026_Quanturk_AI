@@ -1,0 +1,1 @@
+"""TEKNOFEST 2026 — Havacılıkta Yapay Zekâ ana paketi."""

@@ -1,0 +1,9 @@
+names:
+  0: tasit
+  1: insan
+  2: uap
+  3: uai
+nc: 4
+path: /teamspace/studios/this_studio/TEKNOFEST2026-HAVACILIKTA YAPAY ZEKA YARIŞMASI/data/datasets/task1
+train: images/train
+val: images/val

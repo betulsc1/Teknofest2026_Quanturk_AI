@@ -1,0 +1,123 @@
+import cv2
+import torch
+import time
+import numpy as np
+from lightglue import LightGlue, SuperPoint
+from lightglue.utils import load_image, rbd
+
+# --- FİZİKSEL VE OPTİK AYARLAR ---
+GERCEK_TABELA_BOYUTU = 3.0  # Satranç alanının yaklaşık genişliği (Metre)
+F_PX = 800.0                # Kamera odak uzaklığı (Tahmini)
+IMG_W, IMG_H = 1280, 720    # İşleme çözünürlüğü
+
+def konumu_hesapla(m_kpts1):
+    """Eşleşen noktalardan X, Y, Z metre verisi üretir."""
+    if len(m_kpts1) < 4: return None
+    
+    # 1. Kameradaki hedefin merkezini bul (Piksel)
+    tabela_merkez_x = np.mean(m_kpts1[:, 0])
+    tabela_merkez_y = np.mean(m_kpts1[:, 1])
+    
+    # 2. Hedefin ekrandaki genişliğini hesapla (Piksel)
+    tabela_genislik_px = np.max(m_kpts1[:, 0]) - np.min(m_kpts1[:, 0])
+    if tabela_genislik_px == 0: return None
+    
+    # 3. Matematiksel Dönüşümler (Benzerlik Üçgeni & GSD)
+    z_metre = (GERCEK_TABELA_BOYUTU * F_PX) / tabela_genislik_px
+    gsd = z_metre / F_PX
+    
+    # X ve Y ekseni (Görüntü merkezinden sapma)
+    x_metre = (tabela_merkez_x - (IMG_W / 2)) * gsd
+    y_metre = ((IMG_H / 2) - tabela_merkez_y) * gsd
+    
+    return round(x_metre, 2), round(y_metre, 2), round(z_metre, 2)
+
+# --- MODEL VE DONANIM HAZIRLIĞI ---
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+extractor = SuperPoint(max_num_keypoints=512).eval().to(device)
+matcher = LightGlue(features='superpoint').eval().to(device)
+
+if __name__ == "__main__":
+    print(f"\n--- QUANTURK OTONOM SİSTEM BAŞLATILDI ({device}) ---")
+    
+    # 1. REFERANS RESMİ (Hafıza)
+    tabela_path = "dron.png"
+    try:
+        image0 = load_image(tabela_path).to(device)
+        feats0 = extractor.extract(image0)
+        print(f"✅ Referans yüklendi: {tabela_path}")
+    except:
+        print(f"❌ Hata: {tabela_path} bulunamadı! Lütfen SS alıp klasöre koy.")
+        exit()
+
+    # 2. VİDEO AKIŞI (Göz)
+    video_path = "dron.mp4"
+    cap = cv2.VideoCapture(video_path)
+
+    if not cap.isOpened():
+        print(f"❌ Hata: {video_path} dosyası açılamadı!")
+    else:
+     print(f"🚀 {video_path} işleniyor... (Hedef: 2250 Kare)")
+frame_count = 0
+ucustaki_veriler = [] # Verileri burada toplayacağız
+
+while cap.isOpened():
+            ret, frame = cap.read()
+            
+            # 1. KESİN DURDURMA: 2250 kareye ulaştıysak veya video bittiyse çık
+            if not ret or frame_count >= 2250: 
+                break
+            
+            frame_count += 1
+            if frame_count % 2 != 0: continue # Performans için kare atlama
+
+            # Görüntü hazırlama
+            frame_resized = cv2.resize(frame, (960, 540)) 
+            frame_rgb = cv2.cvtColor(frame_resized, cv2.COLOR_BGR2RGB)
+            image1 = torch.from_numpy(frame_rgb).float().permute(2, 0, 1) / 255.0
+            image1 = image1.to(device)
+
+            # ANALİZ
+            start_frame = time.time()
+            with torch.no_grad():
+                feats1 = extractor.extract(image1)
+                matches01 = matcher({'image0': feats0, 'image1': feats1})
+            
+            # Koordinat Ayıklama
+            feats1_match = rbd(feats1)
+            matches = matches01['matches0'][0]
+            valid = matches > -1
+            m_kpts1 = feats1_match['keypoints'][matches[valid]].cpu().numpy()
+
+            # KOORDİNAT HESABI VE GÖRSELLEŞTİRME
+            koordinatlar = konumu_hesapla(m_kpts1)
+            fps = 1 / (time.time() - start_frame)
+            
+            if koordinatlar:
+                x, y, z = koordinatlar
+                # --- SATRANÇ TAHTASINI ÇERÇEVELE ---
+                src_pts = np.float32(m_kpts1).reshape(-1, 1, 2)
+                rect = cv2.minAreaRect(src_pts)
+                box = cv2.boxPoints(rect)
+                box = np.int64(box)
+                cv2.drawContours(frame_resized, [box], 0, (0, 255, 0), 2) # Yeşil kutu
+                
+                # Veriyi listeye ekle
+                ucustaki_veriler.append({
+                    "frame_id": frame_count, "translation_x": x,
+                    "translation_y": y, "translation_z": z, "is_detected": True
+                })
+                print(f"📍 Kare {frame_count} -> X: {x}m, Y: {y}m, Z: {z}m | FPS: {fps:.1f}  ", end='\r')
+            else:
+                print(f"🔍 Kare {frame_count}: Hedef aranıyor...                ", end='\r')
+
+            # Görüntüyü göster (Takibini yapman için)
+            cv2.imshow('QUAN Otonom Takip', frame_resized)
+            if cv2.waitKey(1) & 0xFF == ord('q'): break
+
+    # DÖNGÜ BİTTİĞİNDE KAYDET
+cap.release()
+cv2.destroyAllWindows()
+
+print(f"\n✅ İŞLEM TAMAMLANDI! 2250 kare işlendi")
+ 

@@ -1,0 +1,104 @@
+# ============================================================
+# TEKNOFEST 2026 — Havacılıkta Yapay Zeka
+# Python Bagimlilik Listesi
+#
+# Kurulum sırası:
+#   1) pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
+#   2) pip install -r requirements.txt
+#
+# NOT: PyTorch bu listede YOK — CUDA versiyonuna gore
+#      ayri kurulmasi gerekiyor (yukardaki komut).
+# ============================================================
+
+# ---- GOREV 1: NESNE TESPITI --------------------------------
+
+# YOLOv9 / YOLOv10 — ana tespit modeli
+ultralytics>=8.1.0
+
+# RT-DETR ensemble icin
+transformers>=4.37.0
+
+# ByteTracker lineer atama (hareket tespiti)
+lapx>=0.5.5
+
+# SAHI — kucuk nesne tespiti icin goruntu dilimleme
+sahi>=0.11.15
+
+# ---- GOREV 2: POZISYON TESPITI ----------------------------
+
+# Extended Kalman Filter
+filterpy>=1.4.5
+
+# Bilimsel hesaplama (matris, istatistik)
+scipy>=1.12.0
+
+# ---- GOREV 3: GORUNTU ESLEME ------------------------------
+
+# Transformer tensor isleme (DINOv2 icin)
+einops>=0.7.0
+
+# Vision transformer modelleri (DINOv2, SuperPoint)
+timm>=0.9.12
+
+# ---- GORUNTU ISLEME — HER GOREV --------------------------
+
+# OpenCV — homografi, CLAHE, renk uzayi donusumleri
+opencv-python-headless>=4.9.0
+
+# Pillow — PNG/JPG okuma/yazma
+Pillow>=10.2.0
+
+# ---- AUGMENTATION — EGITIM ICIN --------------------------
+
+# Yagmur, sis, kar, bulaniklik, perspektif efektleri
+albumentations>=1.3.1
+
+# ---- SUNUCU ILETISIMI ------------------------------------
+
+# Senkron HTTP — temel API istekleri
+requests>=2.31.0
+
+# Asenkron HTTP — eszamanli frame cekme
+aiohttp>=3.9.0
+
+# ---- TEMEL BILIMSEL HESAPLAMA ----------------------------
+
+# Array ve matris isleme
+numpy>=1.26.0
+
+# RANSAC, normalizasyon, kumeleme
+scikit-learn>=1.4.0
+
+# ---- KONFIGURASYON YONETIMI ------------------------------
+
+# config/*.yaml dosyalari icin
+pyyaml>=6.0.1
+
+# ---- LOGLAMA & IZLEME ------------------------------------
+
+# Frame isleme ilerleme cubugu
+tqdm>=4.66.0
+
+# Gelismis terminal ciktisi
+rich>=13.7.0
+
+# ---- GORSELLESTIRME & DEBUG ------------------------------
+
+# Pozisyon grafikleri, hata egrileri
+matplotlib>=3.8.0
+
+# Istatistik grafikleri
+seaborn>=0.13.0
+
+# ---- MODEL OPTIMIZASYONU ---------------------------------
+
+# GPU hizlandirmali ONNX inference
+onnxruntime-gpu>=1.17.0
+
+# ONNX model export formati
+onnx>=1.15.0
+
+# ---- TEST ------------------------------------------------
+
+pytest>=8.0.0
+pytest-asyncio>=0.23.0

@@ -1,0 +1,18 @@
+{
+  "total_rmse": 6.5454,
+  "rmse_x": 9.74,
+  "rmse_y": 4.1339,
+  "rmse_z": 3.5319,
+  "max_error": 50.0,
+  "blind_rmse": 8.1363,
+  "blind_rmse_x": 10.8897,
+  "blind_rmse_y": 4.6217,
+  "blind_rmse_z": 3.7688,
+  "avg_processing_ms": 143.0,
+  "max_processing_ms": 1876.5,
+  "effective_fps": 7.0,
+  "total_elapsed_sec": 372.5,
+  "total_frames": 2250,
+  "gps_healthy_frames": 450,
+  "gps_blind_frames": 1800
+}
